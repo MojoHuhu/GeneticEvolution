@@ -59,7 +59,7 @@ std::random_device dev;
 
 
 template <class T>
-inline void Initial ( std::vector <T> &solu,int num_w,int NUM)
+inline void Initial ( std::vector <T> &solu,const int &num_w,const int & NUM)
 {
  std::uniform_real_distribution<float> unif(-1,1);
  T tmp;
@@ -77,7 +77,7 @@ inline void Sort_by_Fitness(std::vector <T> &solu)
 {
 
 
-               #pragma omp parallel for
+               //#pragma omp parallel for
                for(auto& s:solu){s.fitness();}
                 
                /*
@@ -103,7 +103,7 @@ inline void Print_Best_10(std::vector <T> &solu,int ep,time_t &begin )
       
 }
 template <class T>
-inline void Copy_Sampel_and_Clean_Solution(std::vector <T> &solu,std::vector<T> &sample,int  sample_size )
+inline void Copy_Sampel_and_Clean_Solution(std::vector <T> &solu,std::vector<T> &sample,const int  &sample_size )
 {
 
         sample.resize(0); 
@@ -113,10 +113,11 @@ inline void Copy_Sampel_and_Clean_Solution(std::vector <T> &solu,std::vector<T> 
             
 }
 template <class T>
-inline void Mutation( std::vector<T> &sample,int num_w,int  keep_best,float rate )
+inline void Mutation( std::vector<T> &sample,const int &num_w,const int  &keep_best,const double &rate )
 {
             // mutation
-            std::uniform_real_distribution<float> m(1.0 - rate ,1.0+rate);
+            std::uniform_real_distribution<double> m(1.0 - rate ,1.0+rate);
+             //#pragma omp parallel for
                 std::for_each(sample.begin()+ keep_best,sample.end(),[&](auto& s){
                     for(int i =0; i<num_w;i++)
                          s.x[i] *=m(dev);
@@ -124,7 +125,7 @@ inline void Mutation( std::vector<T> &sample,int num_w,int  keep_best,float rate
 
 }
 template <class T>
-inline void Crossover(std::vector <T> &solu,int num_w,int NUM,std::vector<T> &sample,int  keep_best )
+inline void Crossover(std::vector <T> &solu,int &num_w,int &NUM,std::vector<T> &sample,const int  &keep_best )
 {
          T tmp;
           tmp.rank =0;
@@ -134,7 +135,7 @@ inline void Crossover(std::vector <T> &solu,int num_w,int NUM,std::vector<T> &sa
 
             std::uniform_int_distribution<int> cross(0,sample.size() -1);
 
-  //#pragma omp for
+           //#pragma omp for
             for(int i=keep_best;i< NUM; i++){
                 for(int h=0;h<num_w;h++)
                     tmp.x[h] =sample[cross(dev)].x[h];
@@ -144,7 +145,7 @@ inline void Crossover(std::vector <T> &solu,int num_w,int NUM,std::vector<T> &sa
 
 
 template <class T>
-void Genetic (std::vector <T>&solutions, int num_w,int epochen =80,float mutation_rate =0.01, int solu_size = 100000,  int sample_size =1000,int keep_best =4)
+void Genetic (std::vector <T>&solutions, int num_w,int epochen =80,double mutation_rate =0.01, int solu_size = 100000,  int sample_size =1000,int keep_best =4)
 {
 clock_t begin = clock();
 std::vector <T>sample;
@@ -156,7 +157,13 @@ Initial<T> (solutions,num_w,solu_size);
         Sort_by_Fitness<T>(solutions);
 
         Print_Best_10<T>(solutions,ep,begin);
-       
+
+        if(solutions[0].result() ==0){
+           std::cout << "Perfect!\n";
+           ep = epochen;
+           return;
+        }
+
         Copy_Sampel_and_Clean_Solution<T>(solutions,sample,sample_size );
         
         Mutation<T>(sample,num_w,keep_best,mutation_rate);

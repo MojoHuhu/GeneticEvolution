@@ -45,7 +45,7 @@ int main()
    
 
     std::vector <Solution>solutions;
-    Genetic<Solution>(solutions,num_w,20,0.001,2000,500,4);
+    Genetic<Solution>(solutions,num_w,10,0.001,10000,10,2);
   
 
     std::cout << "\nCompair : \n";
