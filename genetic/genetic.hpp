@@ -1,7 +1,7 @@
 #ifndef _GENETIC
 #define _GENETIC
 
-#define USE_HALF_GFLOAT 1
+//#define USE_HALF_GFLOAT 1
 
 // How to use :
 /* 
@@ -116,7 +116,7 @@ template <class T>
 inline void Mutation( std::vector<T> &sample,const int &num_w,const int  &keep_best,const double &rate )
 {
             // mutation
-            std::uniform_real_distribution<double> m(1.0 - rate ,1.0+rate);
+            std::uniform_real_distribution<float> m(1.0 - rate ,1.0+rate);
              //#pragma omp parallel for
                 std::for_each(sample.begin()+ keep_best,sample.end(),[&](auto& s){
                     for(int i =0; i<num_w;i++)
