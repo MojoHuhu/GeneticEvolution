@@ -1,10 +1,18 @@
 #ifndef GMATRIX
 #define GMATRIX 1
 
-#include "./genetic/genetic.hpp"
+#include "../genetic/genetic.hpp"
 #include <iomanip>
 
 
+
+#ifndef USE_HALF_GFLOAT
+     typedef float gfloat;
+#else
+    #include "../half/half.hpp"
+    using half_float::half;
+    typedef half gfloat;
+#endif
 
 
 void  mlp_Matrix( std::vector <gfloat> &ret, std::vector <gfloat> &m1,  unsigned short row1,  unsigned short col1,  std::vector <gfloat> &m2,  unsigned short row2,  unsigned short col2)
@@ -144,8 +152,32 @@ struct gmatrix
 
     return ret;
  }
+
+
+  void setRandom(gfloat from =gfloat(-1),gfloat to= gfloat(1))
+  {
+      unsigned short i;
+      const unsigned short size= this->x.size();
+       std::random_device dev;
+      std::uniform_real_distribution<float> rd(from ,to);
+      std::vector <gfloat> &o= this->x;
+      for(i = 0; i < size; i++)
+            o[i]= rd(dev);
+
+  } 
+
+
+  void setZero()
+  {
  
-  
+      unsigned short i;
+      const unsigned short size= this->x.size();
+      std::vector <gfloat> &o= this->x;
+      for(i = 0; i < size; i++)
+            o[i]= gfloat(0);
+
+  }
+
 };
 
 
